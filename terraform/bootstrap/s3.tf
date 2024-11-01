@@ -99,20 +99,34 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform_state_primary" {
 }
 
 # Replica Bucket
+# Replica Bucket
 resource "aws_s3_bucket" "terraform_state_replica" {
   provider = aws.replica
   bucket   = "${var.project}-${var.environment}-${var.replica_region}-tf-state-replica"
 
+  # Force destroy for testing - remove in production
+  force_destroy = true
+
   tags = {
-    Name        = "Terraform Replica State Bucket"
+    Name        = "Terraform State Replica Bucket"
     Environment = var.environment
     Project     = var.project
   }
 }
 
-# Replication Role
+# Enable versioning on replica bucket
+resource "aws_s3_bucket_versioning" "terraform_state_replica" {
+  provider = aws.replica
+  bucket   = aws_s3_bucket.terraform_state_replica.id
+  
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# IAM Role for replication
 resource "aws_iam_role" "replication" {
-  name = "${var.project}-${var.environment}-tf-state-replication-01"
+  name = "${var.project}-${var.environment}-replication-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -128,16 +142,68 @@ resource "aws_iam_role" "replication" {
   })
 }
 
-# Replication Configuration
+# IAM Policy for replication
+resource "aws_iam_role_policy" "replication" {
+  name = "${var.project}-${var.environment}-replication-policy"
+  role = aws_iam_role.replication.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetReplicationConfiguration",
+          "s3:ListBucket"
+        ]
+        Effect = "Allow"
+        Resource = [
+          aws_s3_bucket.terraform_state_primary.arn
+        ]
+      },
+      {
+        Action = [
+          "s3:GetObjectVersionForReplication",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionTagging"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "${aws_s3_bucket.terraform_state_primary.arn}/*"
+        ]
+      },
+      {
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "${aws_s3_bucket.terraform_state_replica.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Replication configuration
 resource "aws_s3_bucket_replication_configuration" "terraform_state_replica" {
-  depends_on = [aws_s3_bucket_versioning.terraform_state_primary]
+  # Must have bucket versioning enabled first
+  depends_on = [
+    aws_s3_bucket_versioning.terraform_state_primary,
+    aws_s3_bucket_versioning.terraform_state_replica
+  ]
 
   role   = aws_iam_role.replication.arn
-  bucket = aws_s3_bucket.terraform_state_replica.id
+  bucket = aws_s3_bucket.terraform_state_primary.id
 
   rule {
-    id     = "StateReplication"
+    id     = "terraform_state_replication"
     status = "Enabled"
+
+    filter {
+      prefix = "dev/"
+    }
 
     destination {
       bucket        = aws_s3_bucket.terraform_state_replica.arn
@@ -145,4 +211,3 @@ resource "aws_s3_bucket_replication_configuration" "terraform_state_replica" {
     }
   }
 }
-
