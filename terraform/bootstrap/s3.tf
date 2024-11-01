@@ -187,8 +187,8 @@ resource "aws_iam_role_policy" "replication" {
 }
 
 # Replication configuration
+# Replication configuration
 resource "aws_s3_bucket_replication_configuration" "terraform_state_replica" {
-  # Must have bucket versioning enabled first
   depends_on = [
     aws_s3_bucket_versioning.terraform_state_primary,
     aws_s3_bucket_versioning.terraform_state_replica
@@ -201,6 +201,11 @@ resource "aws_s3_bucket_replication_configuration" "terraform_state_replica" {
     id     = "terraform_state_replication"
     status = "Enabled"
 
+    # Add delete marker replication
+    delete_marker_replication {
+      status = "Enabled"
+    }
+
     filter {
       prefix = "dev/"
     }
@@ -208,6 +213,22 @@ resource "aws_s3_bucket_replication_configuration" "terraform_state_replica" {
     destination {
       bucket        = aws_s3_bucket.terraform_state_replica.arn
       storage_class = "STANDARD_IA"
+
+      # Add metrics configurations
+      metrics {
+        status = "Enabled"
+        event_threshold {
+          minutes = 15
+        }
+      }
+
+      # Add replication time control
+      replication_time {
+        status = "Enabled"
+        time {
+          minutes = 15
+        }
+      }
     }
   }
 }
