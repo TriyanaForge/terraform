@@ -108,6 +108,9 @@ module "monitoring" {
   cloudwatch_log_groups = var.cloudwatch_log_groups
   metric_alarms        = var.metric_alarms
   compliance_config    = var.compliance_config
+  vpc_flow_logs = var.vpc_flow_logs
+  dashboards = var.dashboards
+  sns_topics = var.sns_topics
 
   depends_on = [module.vpc, module.security]
 }
