@@ -37,17 +37,17 @@ jobs:
         run: terraform fmt -recursive
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -lock=false
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -lock=false
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -lock=false
       
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+      # - name: Terraform Destroy
+      #   run: terraform destroy -auto-approve
 
   # dev-environment:
   #   name: "Terraform Dev Environment"
