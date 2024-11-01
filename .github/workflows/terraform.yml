@@ -34,13 +34,17 @@ jobs:
           terraform_version: "1.5.0"
 
       - name: Terraform Format
-        run: terraform fmt -recursive  # Changed from fmt -check to fmt
+        run: terraform fmt -recursive
 
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Plan
         run: terraform plan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
 
   dev-environment:
     name: "Terraform Dev Environment"
@@ -66,7 +70,7 @@ jobs:
           terraform_version: "1.5.0"
 
       - name: Terraform Format
-        run: terraform fmt -recursive  # Changed from fmt -check to fmt
+        run: terraform fmt -recursive
 
       - name: Terraform Init
         run: terraform init
