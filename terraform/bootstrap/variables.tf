@@ -25,5 +25,5 @@ variable "environment" {
 variable "project" {
   description = "Project name"
   type        = string
-  default     = "TriyanaForge"
+  default     = "triyanaforge"
 }
