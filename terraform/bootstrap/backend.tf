@@ -5,7 +5,7 @@ terraform {
     key            = "bootstrap/terraform.tfstate"  # Note different key path
     region         = "ap-south-1"
     encrypt        = true
-    kms_key_id     = "76fa5abb-e9b5-4e54-a1bd-c7c7bde4bbf7"
+    kms_key_id     = "mrk-e034430d0f6b4de1bcc1c0e2b9689bb7"
     dynamodb_table = "terraform-lock-table"
   }
 }
