@@ -11,6 +11,6 @@ resource "aws_kms_key" "terraform_primary_bucket_key" {
 }
 
 resource "aws_kms_alias" "terraform_primary_bucket_key" {
-  name          = "alias/terraform-primary-bucket-key"
+  name          = "alias/terraform-primary-bucket-key-01"
   target_key_id = aws_kms_key.terraform_primary_bucket_key.id
 }

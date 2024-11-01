@@ -1,6 +1,6 @@
 # Main State Bucket
 resource "aws_s3_bucket" "terraform_state_primary" {
-  bucket = "${var.resource_prefix}-${var.environment}-${var.primary_region}-tf-state-bucket-01"
+  bucket = "${var.resource_prefix}-${var.environment}-${var.primary_region}-tf-state-bucket"
 
   tags = {
     Name        = "Terraform Primary State Bucket"
@@ -42,7 +42,7 @@ resource "aws_s3_bucket_public_access_block" "terraform_state_primary" {
 
 # Logging Bucket
 resource "aws_s3_bucket" "terraform_logs" {
-  bucket = "${var.project}-${var.environment}-${var.primary_region}-tf-log-bucket-01"
+  bucket = "${var.project}-${var.environment}-${var.primary_region}-tf-log-bucket"
 
   tags = {
     Name        = "Terraform Primary State Log Bucket"
@@ -101,7 +101,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform_state_primary" {
 # Replica Bucket
 resource "aws_s3_bucket" "terraform_state_replica" {
   provider = aws.replica
-  bucket   = "${var.project}-${var.environment}-${var.replica_region}-tf-state-replica-01"
+  bucket   = "${var.project}-${var.environment}-${var.replica_region}-tf-state-replica"
 
   tags = {
     Name        = "Terraform Replica State Bucket"
@@ -112,7 +112,7 @@ resource "aws_s3_bucket" "terraform_state_replica" {
 
 # Replication Role
 resource "aws_iam_role" "replication" {
-  name = "${var.project}-${var.environment}-tf-state-replication"
+  name = "${var.project}-${var.environment}-tf-state-replication-01"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
