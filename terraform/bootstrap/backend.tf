@@ -1,7 +1,7 @@
 # terraform/bootstrap/backend.tf
 terraform {
   backend "s3" {
-    bucket         = "triyanaforge-backend"
+    bucket         = "triyanaforge-bootstrap-backend"
     key            = "bootstrap/terraform.tfstate"  # Note different key path
     region         = "ap-south-1"
     encrypt        = true
