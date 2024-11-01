@@ -11,37 +11,8 @@ permissions:
   id-token: write
 
 jobs:
-  destroy-dev:  # Add this job first
-    name: "Destroy Dev Environment"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform/environments/dev
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::157583859662:role/tf-dev-mum-iam-assume-role
-          aws-region: ap-south-1
-          role-session-name: GithubActionsSession
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: "1.5.0"
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
-
-  destroy-bootstrap:  # Then destroy bootstrap
-    name: "Destroy Bootstrap"
-    needs: destroy-dev
+  bootstrap:
+    name: "Terraform Bootstrap"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,100 +33,50 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
+      - name: Terraform Format
+        run: terraform fmt -recursive
+
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Plan
+        run: terraform plan
+
+      # - name: Terraform Apply
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: terraform apply -auto-approve
+      
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
-
-  # After destroy is complete, comment out destroy jobs and uncomment these jobs
-  # bootstrap:
-  #   name: "Terraform Bootstrap"
-  #   runs-on: ubuntu-latest
-  #   ...
 
   # dev-environment:
   #   name: "Terraform Dev Environment"
   #   needs: bootstrap
-  #   ...
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: terraform/environments/dev
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: arn:aws:iam::157583859662:role/tf-dev-mum-iam-assume-role
+  #         aws-region: ap-south-1
+  #         role-session-name: GithubActionsSession
 
-# name: "Terraform"
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: "1.5.0"
 
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+  #     - name: Terraform Format
+  #       run: terraform fmt -recursive
 
-# permissions:
-#   contents: read
-#   id-token: write
+  #     - name: Terraform Init
+  #       run: terraform init
 
-# jobs:
-#   bootstrap:
-#     name: "Terraform Bootstrap"
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: terraform/bootstrap
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
-
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::157583859662:role/tf-dev-mum-iam-assume-role
-#           aws-region: ap-south-1
-#           role-session-name: GithubActionsSession
-
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: "1.5.0"
-
-#       - name: Terraform Format
-#         run: terraform fmt -recursive
-
-#       - name: Terraform Init
-#         run: terraform init
-
-#       - name: Terraform Plan
-#         run: terraform plan
-
-#       - name: Terraform Apply
-#         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#         run: terraform apply -auto-approve
-
-#   dev-environment:
-#     name: "Terraform Dev Environment"
-#     needs: bootstrap
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: terraform/environments/dev
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
-
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: arn:aws:iam::157583859662:role/tf-dev-mum-iam-assume-role
-#           aws-region: ap-south-1
-#           role-session-name: GithubActionsSession
-
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: "1.5.0"
-
-#       - name: Terraform Format
-#         run: terraform fmt -recursive
-
-#       - name: Terraform Init
-#         run: terraform init
-
-#       - name: Terraform Plan
-#         run: terraform plan
+  #     - name: Terraform Plan
+  #       run: terraform plan
