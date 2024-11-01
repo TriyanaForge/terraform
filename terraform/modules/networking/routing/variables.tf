@@ -34,7 +34,7 @@ variable "internet_gateways" {
   }))
 }
 
-variable "compliance_config" {
+variable "routing_compliance_config" {
   description = "Compliance configuration for routing"
   type = object({
     enforce_encryption     = bool

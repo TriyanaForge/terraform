@@ -53,7 +53,7 @@ variable "vpc_flow_logs" {
   }))
 }
 
-variable "compliance_config" {
+variable "monitoring_compliance_config" {
   description = "Monitoring compliance configuration"
   type = object({
     min_retention_days     = number

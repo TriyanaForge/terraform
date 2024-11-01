@@ -53,7 +53,7 @@ module "vpc" {
   environment       = var.environment
   region            = var.region
   vpcs              = var.vpcs
-  compliance_config = var.compliance_config
+  vpc_compliance_config = var.vpc_compliance_config
   flow_logs_config  = var.flow_logs_config
 }
 
@@ -65,7 +65,7 @@ module "subnets" {
   environment = var.environment
   region      = var.region
   subnets     = local.subnet_configs
-
+  subnet_compliance_config = var.subnet_compliance_config
   depends_on = [module.vpc]
 }
 
@@ -78,7 +78,7 @@ module "routing" {
   route_tables       = local.route_table_configs
   nat_gateways       = local.nat_gateway_configs
   internet_gateways  = local.internet_gateway_configs
-  compliance_config  = var.compliance_config
+  routing_compliance_config = var.routing_compliance_config
 
   depends_on = [module.vpc, module.subnets]
 }
@@ -93,7 +93,7 @@ module "security" {
   security_groups = local.security_group_configs
   waf_rules       = var.waf_rules
   network_acls    = local.network_acl_configs
-  compliance_config = var.compliance_config
+  security_compliance_config = var.security_compliance_config
 
   depends_on = [module.vpc]
 }
@@ -107,7 +107,7 @@ module "monitoring" {
   region               = var.region
   cloudwatch_log_groups = var.cloudwatch_log_groups
   metric_alarms        = var.metric_alarms
-  compliance_config    = var.compliance_config
+  monitoring_compliance_config = var.monitoring_compliance_config
   vpc_flow_logs = var.vpc_flow_logs
   dashboards = var.dashboards
   sns_topics = var.sns_topics
@@ -128,7 +128,7 @@ module "dr" {
   transit_gateway_config = var.transit_gateway_config
   replication_config    = var.replication_config
   dns_failover_config   = var.dns_failover_config
-  compliance_config     = var.compliance_config
+  dr_compliance_config = var.dr_compliance_config
 
   depends_on = [module.vpc, module.monitoring]
 }

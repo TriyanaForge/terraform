@@ -11,7 +11,7 @@ variable "subnets" {
   }))
 }
 
-variable "compliance_config" {
+variable "subnet_compliance_config" {
   description = "Compliance configuration for subnets"
   type = object({
     enforce_subnet_isolation = bool

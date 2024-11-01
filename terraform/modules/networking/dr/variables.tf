@@ -57,7 +57,7 @@ variable "replication_config" {
   }))
 }
 
-variable "compliance_config" {
+variable "dr_compliance_config" {
   description = "DR compliance configuration"
   type = object({
     rpo_requirements     = number  # Recovery Point Objective in minutes

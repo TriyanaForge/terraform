@@ -22,7 +22,7 @@ variable "flow_logs_config" {
   }))
 }
 
-variable "compliance_config" {
+variable "vpc_compliance_config" {
   description = "Compliance configuration settings"
   type = object({
     data_retention_days = number

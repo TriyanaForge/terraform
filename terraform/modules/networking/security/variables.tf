@@ -63,7 +63,7 @@ variable "waf_rules" {
   }))
 }
 
-variable "compliance_config" {
+variable "security_compliance_config" {
   description = "Security compliance configuration"
   type = object({
     enable_waf           = bool
@@ -77,6 +77,7 @@ variable "compliance_config" {
     log_retention_days   = number
     mandatory_tags       = map(string)
   })
+
   default = {
     enable_waf           = true
     enable_security_hub  = true

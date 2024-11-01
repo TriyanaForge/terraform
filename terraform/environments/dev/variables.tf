@@ -36,7 +36,7 @@ variable "flow_logs_config" {
   }))
 }
 
-variable "compliance_config" {
+variable "vpc_compliance_config" {
   description = "Compliance configuration settings"
   type = object({
     data_retention_days = number
@@ -61,7 +61,7 @@ variable "subnets" {
   }))
 }
 
-variable "compliance_config" {
+variable "subnet_compliance_config" {
   description = "Compliance configuration for subnets"
   type = object({
     enforce_subnet_isolation = bool
@@ -147,7 +147,7 @@ variable "waf_rules" {
   }))
 }
 
-variable "compliance_config" {
+variable "security_compliance_config" {
   description = "Security compliance configuration"
   type = object({
     enable_waf           = bool
@@ -214,7 +214,7 @@ variable "internet_gateways" {
   }))
 }
 
-variable "compliance_config" {
+variable "routing_compliance_config" {
   description = "Compliance configuration for routing"
   type = object({
     enforce_encryption     = bool
@@ -294,7 +294,7 @@ variable "vpc_flow_logs" {
   }))
 }
 
-variable "compliance_config" {
+variable "monitoring_compliance_config" {
   description = "Monitoring compliance configuration"
   type = object({
     min_retention_days     = number
@@ -413,7 +413,7 @@ variable "replication_config" {
   }))
 }
 
-variable "compliance_config" {
+variable "dr_compliance_config" {
   description = "DR compliance configuration"
   type = object({
     rpo_requirements     = number  # Recovery Point Objective in minutes
